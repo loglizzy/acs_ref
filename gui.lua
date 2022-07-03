@@ -1,5 +1,6 @@
 if shared.acs_ref then return end
 shared.acs_ref = true
+
 local Player = game.Players.LocalPlayer
 local Storage = game.ReplicatedStorage    
     
@@ -59,33 +60,63 @@ local Window = Library:AddWindow("Values Explorer", {
 local Folders = {}
 function Compile(plr, pr)
     for i,v in next, pr:GetChildren() do
-        if v:IsA("NumberValue") or v:IsA("IntValue") then
-            local box
-            box = plr:AddTextBox("", function(val)
-                val = tonumber(val)
-                if val then v.Value = val refil(v, val, v.Value) end
-            end)
-            
-            box.RichText = true
-            box.Text = "<b>"..v.Name..":</b> "..v.Value
-            box.FocusLost:Connect(function()
-                task.wait()
+        pr.ChildAdded:Connect(function(v)
+            if v:IsA("NumberValue") or v:IsA("IntValue") then
+                local box
+                box = plr:AddTextBox("", function(val)
+                    val = tonumber(val)
+                    if val then v.Value = val refil(v, val, v.Value) end
+                end)
+                
+                box.RichText = true
                 box.Text = "<b>"..v.Name..":</b> "..v.Value
-            end)
-            
-            v:GetPropertyChangedSignal("Value"):Connect(function()
-                if not box:IsFocused() then
+                box.FocusLost:Connect(function()
+                    task.wait()
                     box.Text = "<b>"..v.Name..":</b> "..v.Value
-                end
-            end)
-        end
-        
-        for i,e in next, v:GetDescendants() do
-            if e:IsA("NumberValue") or e:IsA("IntValue") then
-                Compile(plr:AddFolder(v.Name), v)
-                break
+                end)
+                
+                v:GetPropertyChangedSignal("Value"):Connect(function()
+                    if not box:IsFocused() then
+                        box.Text = "<b>"..v.Name..":</b> "..v.Value
+                    end
+                end)
             end
-        end
+            
+            for i,e in next, v:GetDescendants() do
+                if e:IsA("NumberValue") or e:IsA("IntValue") then
+                    Compile(plr:AddFolder(v.Name), v)
+                    break
+                end
+            end
+        end)
+        
+        if v:IsA("NumberValue") or v:IsA("IntValue") then
+                local box
+                box = plr:AddTextBox("", function(val)
+                    val = tonumber(val)
+                    if val then v.Value = val refil(v, val, v.Value) end
+                end)
+                
+                box.RichText = true
+                box.Text = "<b>"..v.Name..":</b> "..v.Value
+                box.FocusLost:Connect(function()
+                    task.wait()
+                    box.Text = "<b>"..v.Name..":</b> "..v.Value
+                end)
+                
+                v:GetPropertyChangedSignal("Value"):Connect(function()
+                    if not box:IsFocused() then
+                        box.Text = "<b>"..v.Name..":</b> "..v.Value
+                    end
+                end)
+            end
+            
+            for i,e in next, v:GetDescendants() do
+                if e:IsA("NumberValue") or e:IsA("IntValue") then
+                    Compile(plr:AddFolder(v.Name), v)
+                    break
+                end
+            end
     end
 end
 
