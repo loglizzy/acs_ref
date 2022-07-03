@@ -1,3 +1,5 @@
+if shared.acs_ref then return end
+shared.acs_ref = true
 local Player = game.Players.LocalPlayer
 local Storage = game.ReplicatedStorage    
     
